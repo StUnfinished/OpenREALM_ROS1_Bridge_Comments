@@ -122,8 +122,11 @@ void Exiv2GrabberNode::readParams()
 
 void Exiv2GrabberNode::setPaths()
 {
+  // If the working path is not set, get the path of the realm_ros package as the _path_working_directory path.
   if (_path_working_directory == "uninitialised")
     _path_working_directory = ros::package::getPath("realm_ros");
+
+  // The _profile here has the following three types: alexa_noreco, alexa_reco, alexa_gnss.
   _path_profile = _path_working_directory + "/profiles/" + _profile;
 
   _file_settings_camera = _path_profile + "/camera/calib.yaml";
