@@ -64,6 +64,7 @@ StageNode::StageNode(int argc, char **argv)
   ROS_INFO("STAGE_NODE [%s]: : Detected camera model: '%s'", _type_stage.c_str(), (*_settings_camera)["type"].toString().c_str());
 
   // Create stages
+  // During class initialization, create different stage classes based on the stage/type values passed in from the launch file.
   if (_type_stage == "pose_estimation")
     createStagePoseEstimation();
   if (_type_stage == "densification")
@@ -98,6 +99,8 @@ StageNode::~StageNode()
 
 void StageNode::spin()
 {
+  // If it is the main stage, then publish the name of the output folder to the topic "general/output_dir" 
+  // so that other subscriber nodes can access this node's output directory.
   if (_is_master_stage)
   {
     // Share output folder with slaves
@@ -107,6 +110,10 @@ void StageNode::spin()
   }
 
   static tf::TransformBroadcaster br;
+
+  // If the reference coordinate system has been initialized and it is the main stage, then send out the tf transform message of the reference coordinate system. 
+  // Broadcast the base transform (_tf_base), which is usually a transformation based on Universal Time Coordinate (UTC). 
+  // Also, publish the GNSS base station location (_gnss_base) information to the corresponding topic to inform other nodes of the current reference position.
   if (_is_tf_base_initialized && _is_master_stage)
   {
     // Master stage sends first tf as mission reference
@@ -160,6 +167,7 @@ void StageNode::createStagePoseEstimation()
   }
 }
 
+// The point cloud densification process (PSL method) will only be called in alexa_reco.launch mode, which is the 3D reconstruction mode.
 void StageNode::createStageDensification()
 {
   // Densification uses external frameworks, therefore load settings for that
@@ -531,6 +539,7 @@ void StageNode::readParams()
   param_nh.param("config/id", _id_camera, std::string("uninitialised"));
   param_nh.param("config/profile", _profile, std::string("uninitialised"));
   param_nh.param("config/method", _method, std::string("uninitialised"));
+  // If an output path is set, then use the specified path; otherwise, use the default path, which is the path of the current working space.
   param_nh.param("config/opt/working_directory", _path_working_directory, std::string("uninitialised"));
   param_nh.param("config/opt/output_directory", _path_output, std::string("uninitialised"));
 
