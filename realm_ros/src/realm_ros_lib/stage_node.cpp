@@ -42,6 +42,8 @@ StageNode::StageNode(int argc, char **argv)
   _tf_stage_frame_name = "realm_" + _id_camera + "_" + _type_stage;
 
   // Set ros subscriber according to launch input
+  // Only the master node can publish the save path of the stitching results: general/output_dir 
+  // Other nodes can only subscribe to this topic to obtain the save path of the stitching results.
   _sub_input_frame = _nh.subscribe(_topic_frame_in, 5, &StageNode::subFrame, this, ros::TransportHints());
   if (_is_master_stage)
   {
