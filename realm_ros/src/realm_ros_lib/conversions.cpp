@@ -23,6 +23,7 @@
 namespace realm
 {
 
+// Convert cv::Mat image to sensor_msgs::Image ros_image.
 cv_bridge::CvImage to_ros::image(const std_msgs::Header &header, const cv::Mat &cv_img)
 {
   std::string encoding;
@@ -55,6 +56,7 @@ cv_bridge::CvImage to_ros::image(const std_msgs::Header &header, const cv::Mat &
   return cv_bridge::CvImage(header, encoding, cv_img);
 }
 
+// Convert cv::Mat image to sensor_msgs::Image ros_image for dispay.
 cv_bridge::CvImage to_ros::imageDisplay(const std_msgs::Header &header, const cv::Mat &cv_img)
 {
   std::string encoding;
